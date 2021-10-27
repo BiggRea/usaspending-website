@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import { isCancel } from 'axios';
 import { useDispatch } from 'react-redux';
 
-import { fetchAgencyOverview } from 'apis/agencyV2';
+import { fetchAgencyIds, fetchAgencyOverview } from 'apis/agencyV2';
 import { useQueryParams } from 'helpers/queryParams';
 import BaseAgencyOverview from 'models/v2/agency/BaseAgencyOverview';
 import { setAgencyOverview } from 'redux/actions/agencyV2/agencyV2Actions';
@@ -17,7 +17,6 @@ import { useValidTimeBasedQueryParams, useLatestAccountData } from 'containers/a
 import AgencyPage from 'components/agencyV2/AgencyPage';
 
 export const AgencyProfileV2 = () => {
-    const { agencyId } = useParams();
     const [, , { year: latestFy }] = useLatestAccountData();
     const { fy: currentUrlFy } = useQueryParams(['fy']);
     const [selectedFy, setSelectedFy] = useValidTimeBasedQueryParams(currentUrlFy, null, ['fy']);
@@ -26,6 +25,19 @@ export const AgencyProfileV2 = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const request = useRef(null);
     const dispatch = useDispatch();
+
+    let  agencyId;
+    const { agency } = useParams();
+    // eslint-disable-next-line eqeqeq
+    if (+agency == agency) { // if not numeric ID, get database ID for slug
+agencyId = agency;
+    }else{
+        const  =window.sessionStorage.getItem('agencyIds');
+        if (agencyIds === null) {
+            fetchAgencyIds();
+        }
+        agencyId = JSON.parse( agencyIds)[agency];
+    }
 
     useEffect(() => {
         if (selectedFy) {
@@ -53,7 +65,7 @@ export const AgencyProfileV2 = () => {
                     }
                 });
         }
-    }, [agencyId, selectedFy]);
+    }, [agencyId, dispatch, selectedFy]);
 
     return (
         <AgencyPage
