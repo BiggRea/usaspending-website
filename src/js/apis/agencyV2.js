@@ -5,20 +5,9 @@
 
 import { apiRequest } from '../helpers/apiRequest';
 
-export const fetchAgencyIds = () => {
-    apiRequest({
-        url: 'v2/references/toptier_agencies/'
-    }).promise.then((res) => {
-        const agencyMap = res.results.map((a) => ({ [a.agency_slug]: a.toptier_code }));
-
-// console.log(agencyMap);
-
-        window.sessionStorage.setItem('agencyIds', JSON.stringify(agencyMap));
-
-        console.log(JSON.parse(window.sessionStorage.getItem('agencyIds')));
-
-    });
-};
+export const fetchAgencyIds = () => apiRequest({
+    url: 'v2/references/toptier_agencies/'
+});
 
 export const fetchSpendingCount = (agencyId, fy, type) => apiRequest({
     url: `v2/agency/${agencyId}/${type}/count/`,

@@ -8,7 +8,8 @@ import { useParams } from 'react-router-dom';
 import { isCancel } from 'axios';
 import { useDispatch } from 'react-redux';
 
-import { fetchAgencyIds, fetchAgencyOverview } from 'apis/agencyV2';
+import { getAgencyId } from 'helpers/agencyV2/AgencyIdHelper';
+import { fetchAgencyOverview } from 'apis/agencyV2';
 import { useQueryParams } from 'helpers/queryParams';
 import BaseAgencyOverview from 'models/v2/agency/BaseAgencyOverview';
 import { setAgencyOverview } from 'redux/actions/agencyV2/agencyV2Actions';
@@ -26,18 +27,8 @@ export const AgencyProfileV2 = () => {
     const request = useRef(null);
     const dispatch = useDispatch();
 
-    let  agencyId;
     const { agency } = useParams();
-    // eslint-disable-next-line eqeqeq
-    if (+agency == agency) { // if not numeric ID, get database ID for slug
-agencyId = agency;
-    }else{
-        const  =window.sessionStorage.getItem('agencyIds');
-        if (agencyIds === null) {
-            fetchAgencyIds();
-        }
-        agencyId = JSON.parse( agencyIds)[agency];
-    }
+    const agencyId = getAgencyId(agency);
 
     useEffect(() => {
         if (selectedFy) {

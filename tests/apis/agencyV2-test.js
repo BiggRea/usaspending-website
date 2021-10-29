@@ -4,34 +4,18 @@
  */
 
 //  import * as apis from 'apis/agencyV2';
-import { fetchAgencyIds } from 'apis/agencyV2';
+import { getAgencyId } from 'helpers/agencyV2/AgencyIdHelper';
 
 import * as apiRequest from '../../src/js/helpers/apiRequest';
 import { mockApiCall } from '../testResources/mockApiHelper';
 
-describe('fetchAgencyIds', () => {
-    let mockSessionStore = {};
-
-    beforeAll(() => {
-        global.Storage.prototype.setItem = jest.fn((key, value) => {
-            mockSessionStore[key] = value;
-        });
-        global.Storage.prototype.getItem = jest.fn((key) => mockSessionStore[key]);
-    });
+describe('getAgencyId', () => {
 
     beforeEach(() => {
-        // make sure the mock store starts out empty for each test
-        mockSessionStore = {};
+        window.sessionStorage.clear();
     });
 
-    afterAll(() => {
-        // remove mock functions from global.Storage
-        global.Storage.prototype.setItem.mockReset();
-        global.Storage.prototype.getItem.mockReset();
-    });
-
-
-    it('should set the agency ID/slug mapping in session storage', () => {
+    it('should find the agency ID for a given slug', () => {
         const mockResponse = {
             results: [
                 { toptier_code: '0', agency_slug: 'zero' },
@@ -39,11 +23,6 @@ describe('fetchAgencyIds', () => {
             ]
         };
         mockApiCall(apiRequest, 'apiRequest', mockResponse);
-        fetchAgencyIds();
-
-        console.log(sessionStorage.getItem('agencyIds'));
-        console.log(JSON.parse(sessionStorage.getItem('agencyIds')));
-
-        expect(window.sessionStorage.getItem('agencyIds')).toEqual('1');
+        expect(getAgencyId('one')).toEqual('1');
     });
 });
